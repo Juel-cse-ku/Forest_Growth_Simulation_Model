@@ -1,0 +1,9 @@
+E:\Academic\4th Year 2nd Term\CSE-4200 Project and Thesis II\code\csv_read_write\csv_read_write\obj\Debug\csv_read_write.csproj.CoreCompileInputs.cache
+E:\Academic\4th Year 2nd Term\CSE-4200 Project and Thesis II\code\csv_read_write\csv_read_write\bin\Debug\csv_read_write.exe.config
+E:\Academic\4th Year 2nd Term\CSE-4200 Project and Thesis II\code\csv_read_write\csv_read_write\bin\Debug\csv_read_write.exe
+E:\Academic\4th Year 2nd Term\CSE-4200 Project and Thesis II\code\csv_read_write\csv_read_write\bin\Debug\csv_read_write.pdb
+E:\Academic\4th Year 2nd Term\CSE-4200 Project and Thesis II\code\csv_read_write\csv_read_write\obj\Debug\csv_read_write.exe
+E:\Academic\4th Year 2nd Term\CSE-4200 Project and Thesis II\code\csv_read_write\csv_read_write\obj\Debug\csv_read_write.pdb
+E:\Academic\4th Year 2nd Term\CSE-4200 Project and Thesis II\code\csv_read_write\csv_read_write\bin\Debug\CsvHelper.dll
+E:\Academic\4th Year 2nd Term\CSE-4200 Project and Thesis II\code\csv_read_write\csv_read_write\bin\Debug\CsvHelper.xml
+E:\Academic\4th Year 2nd Term\CSE-4200 Project and Thesis II\code\csv_read_write\csv_read_write\obj\Debug\csv_read_write.csproj.CopyComplete
