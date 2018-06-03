@@ -21,8 +21,8 @@ namespace csv_read_write
 
                 return new Tree()
                 {
-                    X = double.Parse(data[1]),
-                    Y = double.Parse(data[2]),
+                    X = double.Parse(data[0]),
+                    Y = double.Parse(data[1]),
                 };
             }
         }
@@ -30,11 +30,15 @@ namespace csv_read_write
         {
             args = new[] { "../../../DATA/input.csv" };
             var trees = ReadTrees(args[0]);
+
             var text = new StringBuilder();
+            var header = string.Format("{0},{1},{2},{3},{4},{5},{6},{7}", "X", "Y","species","dbh","a","b","AGE","H");
+            text.AppendLine(header);
+
             foreach (var tree in trees)
             {
-                Console.WriteLine(tree.X);
-                Console.WriteLine(tree.Y);
+                //Console.WriteLine(tree.X);
+               // Console.WriteLine(tree.Y);
                 var newLine = string.Format("{0},{1}", tree.X, tree.Y);
                 text.AppendLine(newLine);
             }
