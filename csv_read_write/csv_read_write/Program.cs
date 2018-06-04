@@ -22,10 +22,12 @@ namespace csv_read_write
             public double AGE { get; set; }
             public double Species { get; set; }
             public double ZOI { get; set; }
+            public static double _R { get; set; }
 
             public static Tree FromLine(string line)
             {
                 var data = line.Split(',');
+                //var t = Tree.Get_ZOI(R);
 
                 return new Tree()
                 {
@@ -38,38 +40,57 @@ namespace csv_read_write
                     b = double.Parse(data[6]),
                     H = double.Parse(data[7]),
                     R = Get_R(double.Parse(data[5]), double.Parse(data[6]), double.Parse(data[3])),
-                    //ZOI = Get_ZOI(R),
+                    //_R = Get_R(double.Parse(data[5]), double.Parse(data[6]), double.Parse(data[3])),
+                    //ZOI = Get_ZOI(Get_R(double.Parse(data[5]), double.Parse(data[6]), double.Parse(data[3]))),
+                    //ZOI = t,
+
+                   
                 };
             }
+           /* public static Tree Tree_Details(Tree tree)
+            {
+                return new Tree()
+                {
+                    ZOI = (3.1416 * Math.Pow(tree.R,2)),
+                };
+            }*/
 
             static double Get_R(double a,double b,double dbh)
             {
+                
                 return (a * (Math.Pow(dbh / 2, b)));
             }
-            static double Get_ZOI(object obj)
+            static double Get_ZOI(double R)
             {
-                var R = Convert.ToDouble(obj);
+                //var r = Convert.ToDouble(tree.GetType(R));
                 return (3.1416 * Math.Pow(R, 2));
             } 
         }
+
+
         static void Main(string[] args)
         {
             args = new[] { "../../../DATA/input.csv" };
             var trees = ReadTrees(args[0]);
+            var details_tree = Details_Tree(trees);
 
             var text = new StringBuilder();
-            var header = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}", "X", "Y","species","dbh","AGE", "a", "b", "H","R");
+            var header = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}", "X", "Y","species","dbh","AGE", "a", "b", "H","R","ZOI");
             text.AppendLine(header);
 
-            foreach (var tree in trees)
+            for (int i=0;i<trees.Count();i++)
             {
                 //Console.WriteLine(tree.X);
                // Console.WriteLine(tree.Y);
-                var newLine = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}", tree.X, tree.Y,tree.Species,tree.dbh,tree.AGE,tree.a,tree.b,tree.H,tree.R);
+                var newLine = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}", trees[i].X, trees[i].Y, trees[i].Species, trees[i].dbh, trees[i].AGE, trees[i].a, trees[i].b, trees[i].H, trees[i].R,details_tree[i].ZOI);
                 text.AppendLine(newLine);
             }
+            foreach(var d_tree in details_tree)
+            {
+                Console.WriteLine(d_tree.ZOI);
+            }
             File.WriteAllText("../../../DATA/output.csv", text.ToString());
-            Console.WriteLine(text);
+            //Console.WriteLine(text);
 
             Console.Read();
 
@@ -77,9 +98,25 @@ namespace csv_read_write
         static IList<Tree> ReadTrees(string path, bool hasheaders=true)
         {
             var list = new List<Tree>();
+            //var list_tree_details = new List<Tree>();
             foreach(var line in File.ReadLines(path).Skip(hasheaders ? 1:0))
             {
                 list.Add(Tree.FromLine(line));
+                //list_tree_details.Add(Tree.Tree_Details(Tree.FromLine(line)));
+            }
+            return list;
+        }
+
+        static IList<Tree> Details_Tree(IList<Tree> trees)
+        {
+            var list = new List<Tree>();
+            foreach(var n in trees)
+            {
+                Tree tree = new Tree()
+                {
+                    ZOI = (3.1416 * Math.Pow(n.R, 2)),
+                };
+                list.Add(tree);
             }
             return list;
         }
