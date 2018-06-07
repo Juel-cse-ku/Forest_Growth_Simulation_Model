@@ -48,7 +48,7 @@ namespace csv_read_write
             static double Get_R(double a,double b,double dbh)
             {
                 
-                return (a * (Math.Pow(dbh / 2, b)));
+                return (a * (Math.Sqrt(dbh/2)));
             }
             
         }
@@ -102,7 +102,7 @@ namespace csv_read_write
             {
                 Tree tree = new Tree()
                 {
-                    ZOI = (3.1416 * Math.Pow(n.R, 2)),
+                    ZOI = (3.1416 * Math.Pow(n.a, 2)*n.rbh),
                 };
                 list.Add(tree);
             }
@@ -146,7 +146,7 @@ namespace csv_read_write
             if (r0 < 0)
             {
                 r0 = -r0;
-                result = Tree_FON_PCR(3.1416, 0, r0) *.5;
+                result = Tree_FON_PCR(3.1416, 0, r0) * Calculate_FON(r0,TreeN);
                 if (r0 >= TreeN.R)
                 {
                     return result;
@@ -165,7 +165,7 @@ namespace csv_read_write
                 double y = Math.Sqrt(Math.Pow(r, 2) - Math.Pow(x, 2));
                 double phi = Math.Atan(y / x);
 
-                result = result + Tree_FON_PCR(phi, (r * dr) / 2, r + (dr / 2)) *.5;
+                result = result + Tree_FON_PCR(phi, (r * dr) / 2, r + (dr / 2)) * Calculate_FON(r,TreeN);
 
                 r = r + dr;
             }
@@ -182,7 +182,18 @@ namespace csv_read_write
             return result;
         }
 
-        // shade tolerance calculation
+        static double Calculate_FON(double r, Tree TreeN)
+        {
+            if (r <= TreeN.rbh)
+                return 1;
+            else
+            {
+                double c = Math.Abs(Math.Log(.1)) / (TreeN.R - TreeN.rbh);
+                double result = Math.Exp(-c* (r - TreeN.rbh));
+                return result;
+            }
+
+        }
 
     }
 }
