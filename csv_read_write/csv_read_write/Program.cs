@@ -115,11 +115,13 @@ namespace csv_read_write
 
             for (int k = 0; k < trees.Count(); ++k)
             {
+                //Console.WriteLine(trees[k].FA);
                 for (int n = k + 1; n < trees.Count(); ++n)
                 {
                     trees[k].FA = trees[k].FA + FA_kn(trees[k], trees[n]);
                     trees[n].FA = trees[n].FA + FA_kn(trees[n], trees[k]);
                 }
+                
                 trees[k].FA = trees[k].FA / (3.1416 * Math.Pow(trees[k].R, 2));
                 Console.WriteLine(trees[k].FA);
                 Tree tree = new Tree()
@@ -144,7 +146,7 @@ namespace csv_read_write
             if (r0 < 0)
             {
                 r0 = -r0;
-                result = Tree_FON_PCR(3.1416, 0, r0,TreeK);
+                result = Tree_FON_PCR(3.1416, 0, r0) *.5;
                 if (r0 >= TreeN.R)
                 {
                     return result;
@@ -157,13 +159,13 @@ namespace csv_read_write
             double dr = (r1 - r0) / nStrides;
             double r = r0 + (dr / 2);
 
-            for (int i = 0; i < nStrides; ++i)
+            for (int i = 1; i <= nStrides; ++i)
             {
                 double x = (Math.Pow(A, 2) + Math.Pow(r, 2) - Math.Pow(TreeK.R, 2)) / (2 * A);
                 double y = Math.Sqrt(Math.Pow(r, 2) - Math.Pow(x, 2));
                 double phi = Math.Atan(y / x);
 
-                result = result + Tree_FON_PCR(phi, (r * dr) / 2, r + (dr / 2),TreeK);
+                result = result + Tree_FON_PCR(phi, (r * dr) / 2, r + (dr / 2)) *.5;
 
                 r = r + dr;
             }
@@ -171,15 +173,16 @@ namespace csv_read_write
 
         }
 
-        static double Tree_FON_PCR(double phi, double r0, double r1,Tree TreeK)
+        static double Tree_FON_PCR(double phi, double r0, double r1)
         {
             double result = 0;  //do integration
-            double c = .1;
-            result = (-2 * phi / c) * (Math.Exp(-c * (r1 - TreeK.rbh)) - Math.Exp(-c * (r0 - TreeK.rbh)));
+           
+            result = 2 * phi * (r1 - r0);
 
             return result;
         }
 
+        // shade tolerance calculation
 
     }
 }
