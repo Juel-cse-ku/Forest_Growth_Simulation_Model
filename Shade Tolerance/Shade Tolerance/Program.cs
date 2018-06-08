@@ -11,8 +11,8 @@ namespace Shade_Tolerance
 {
     class Program
     {
-        static readonly double a = 8.209;
-        static readonly double b = 0.5352;
+       /* static readonly double a = 8.209;
+       // static readonly double b = 0.5352;
         static readonly double c = 1.30; // competition factor 
         static readonly double rbh;
         static readonly double d;
@@ -20,7 +20,7 @@ namespace Shade_Tolerance
         static readonly double b3 = 0.0538;
         static readonly double G = 275;
         static readonly double H_max = 3500;
-        static readonly double dbh_max = 250;
+        static readonly double dbh_max = 250;*/
         
 
         struct Tree
@@ -33,9 +33,10 @@ namespace Shade_Tolerance
 
         static void Main(string[] args)
         {
-            double r = Growth_Rate(1, 1, 1183.337524, 42.51181448);
+            //double r = Growth_Rate(1, 1, 1183.337524, 42.51181448);
 
-            Console.Write(r);
+           Console.WriteLine(Shaded_Area(2,2,6,4));
+           // Console.Write(r);
             Console.Read();
         }
 

@@ -24,6 +24,8 @@ namespace csv_read_write
             public double Species { get; set; }
             public double ZOI { get; set; }
             public double FA { get; set; }
+            public double Crown_Radius { get; set; }
+            public double Shaded_Area{get; set;}
 
             public static Tree FromLine(string line)
             {
@@ -41,7 +43,9 @@ namespace csv_read_write
                     b = double.Parse(data[6]),
                     H = double.Parse(data[7]),
                     R = Get_R(double.Parse(data[5]), double.Parse(data[6]), double.Parse(data[3])),
-                                      
+                    //1.1331 +(15.233* double.Parse(data[3])),
+                    Crown_Radius = (1.1331 + (15.233 * double.Parse(data[3]))) / 2,
+
                 };
             }
            
@@ -60,27 +64,21 @@ namespace csv_read_write
             var trees = ReadTrees(args[0]);
             var zoi_trees = ZOI_Trees(trees);
             var FA_trees = CalculateFA(trees);
-
-            Console.WriteLine(FA_trees.Count());
+            
 
             var text = new StringBuilder();
-            var header = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}", "X", "Y","species","dbh","rbh","AGE", "a", "b", "H","R","ZOI","FA");
+            var header = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13}", "X", "Y","species","dbh","rbh","AGE", "a", "b", "H","R","ZOI","FA","Crown Radius","Shaded Area");
             text.AppendLine(header);
 
             for (int i=0;i<trees.Count();i++)
             {
-                //Console.WriteLine(tree.X);
-               // Console.WriteLine(tree.Y);
-                var newLine = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}", trees[i].X, trees[i].Y, trees[i].Species, trees[i].dbh,trees[i].rbh, trees[i].AGE, trees[i].a, trees[i].b, trees[i].H, trees[i].R, zoi_trees[i].ZOI,FA_trees[i].FA);
+                var newLine = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13}", trees[i].X, trees[i].Y, trees[i].Species, trees[i].dbh,trees[i].rbh, trees[i].AGE, trees[i].a, trees[i].b, trees[i].H, trees[i].R, zoi_trees[i].ZOI,FA_trees[i].FA,trees[i].Crown_Radius,FA_trees[i].Shaded_Area);
                 text.AppendLine(newLine);
             }
-            foreach(var d_tree in zoi_trees)
-            {
-                //Console.WriteLine(d_tree.ZOI);
-            }
+            
             File.WriteAllText("../../../DATA/output.csv", text.ToString());
-            //Console.WriteLine(text);
 
+            Console.WriteLine("DONE");
             Console.Read();
 
         }
@@ -112,18 +110,26 @@ namespace csv_read_write
         static IList<Tree> CalculateFA(IList<Tree> trees)
         {
             var list = new List<Tree>();
-
+            
             for (int k = 0; k < trees.Count(); k++)
             {
+                
                 //Console.WriteLine(trees[k].FA);
                 for (int n = k + 1; n < trees.Count(); n++)
-                {
+                {   //FA calculation
                     trees[k].FA = trees[k].FA + FA_kn(trees[k], trees[n]);
                     trees[n].FA = trees[n].FA + FA_kn(trees[n], trees[k]);
+
+                    //shade tolerance 
+                    trees[k].Shaded_Area += Shaded_Area(trees[k], trees[n]);
+                    trees[n].Shaded_Area += Shaded_Area(trees[n], trees[k]);
                 }
-                
+               
                 trees[k].FA = trees[k].FA / (3.1416 * Math.Pow(trees[k].R, 2));
-                //Console.WriteLine(trees[k].FA);
+                Console.WriteLine(trees[k].Shaded_Area);
+                trees[k].Shaded_Area = trees[k].Shaded_Area / (3.1416 * Math.Pow(trees[k].Crown_Radius, 2));
+                
+
                 Tree tree = new Tree()
                 {
                     FA = trees[k].FA,
@@ -141,6 +147,7 @@ namespace csv_read_write
 
             if (A > TreeK.R + TreeN.R)
             {
+                
                 return result;
             }
             double r0 = A - TreeK.R;
@@ -150,6 +157,7 @@ namespace csv_read_write
                 result = Tree_FON_PCR(3.1416, 0, r0) * Calculate_FON(r0,TreeN);
                 if (r0 >= TreeN.R)
                 {
+                    
                     return result;
                 }
             }
@@ -164,8 +172,9 @@ namespace csv_read_write
             {
                 double x = (Math.Pow(A, 2) + Math.Pow(r, 2) - Math.Pow(TreeK.R, 2)) / (2 * A);
                 double y = Math.Sqrt(Math.Pow(r, 2) - Math.Pow(x, 2));
+               // x = Math.Abs(x);
                 double phi = Math.Atan(y / x);
-
+               // Console.WriteLine(phi);
                 result = result + Tree_FON_PCR(phi, (r * dr) / 2, r + (dr / 2)) * Calculate_FON(r,TreeN);
 
                 r = r + dr;
@@ -191,6 +200,65 @@ namespace csv_read_write
             {
                 double c = Math.Abs(Math.Log(.1)) / (TreeN.R - TreeN.rbh);
                 double result = Math.Exp(-c* (r - TreeN.rbh));
+                return result;
+            }
+
+        }
+        // shade tolerance calculation
+        static double Shaded_Area(Tree TreeK, Tree TreeN)
+        {
+            double result = 0;
+
+            double A = Math.Sqrt(Math.Pow(TreeK.X - TreeN.X, 2) + Math.Pow(TreeK.Y - TreeN.Y, 2));
+
+            if (A > TreeK.Crown_Radius + TreeN.Crown_Radius || TreeK.H > TreeN.H)
+            {
+               
+                return result;
+            }
+            double r0 = A - TreeK.Crown_Radius;
+            if (r0 < 0)
+            {
+                r0 = -r0;
+                result = Tree_FON_PCR(3.1416, 0, r0) * Calculate_Shade_Area(r0, TreeN);
+                //Console.WriteLine(Calculate_Shade_Area(r0, TreeN));
+                if (r0 >= TreeN.Crown_Radius)
+                {
+                   
+                    return result;
+                }
+            }
+
+            double r1 = Math.Min(TreeN.Crown_Radius, A + TreeK.Crown_Radius);
+            r0 = Math.Abs(r0);
+            double nStrides = 2;
+            double dr = (r1 - r0) / nStrides;
+            double r = r0 + (dr / 2);
+
+            for (int i = 0; i < nStrides; i++)
+            {
+                double x = (Math.Pow(A, 2) + Math.Pow(r, 2) - Math.Pow(TreeK.Crown_Radius, 2)) / (2 * A);
+                double y = Math.Sqrt(Math.Pow(r, 2) - Math.Pow(x, 2));
+                x = Math.Abs(x);
+                double phi = Math.Atan(y / x);
+                //Console.WriteLine(phi);
+                result = result + Tree_FON_PCR(phi, (r * dr) / 2, r + (dr / 2)) * Calculate_Shade_Area(r, TreeN);
+                //Console.WriteLine(Tree_FON_PCR(phi, (r * dr) / 2, r + (dr / 2)));
+                //result = Math.Abs(result);
+                r = r + dr;
+            }
+           // Console.WriteLine(result);
+            return result;
+        }
+
+        static double Calculate_Shade_Area(double r, Tree TreeN)
+        {
+            if (r <= TreeN.rbh)
+                return 1;
+            else
+            {
+                double c = Math.Abs(Math.Log(.1)) / (TreeN.Crown_Radius - TreeN.rbh);
+                double result = Math.Exp(-c * (r - TreeN.rbh));
                 return result;
             }
 
