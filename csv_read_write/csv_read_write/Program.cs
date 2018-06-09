@@ -10,6 +10,14 @@ namespace csv_read_write
 {
     class Program
     {
+        public static double dbh_max;
+        public static double H_max;
+        public static double ddbh_max;
+        public static double d; //constant for salt effect on growth
+        public static double Ui;    //constant salt effect on growth
+        public static double U;     //constant salinity at stem position
+
+
         class Tree
         {
             public double X { get; set; }
@@ -26,6 +34,7 @@ namespace csv_read_write
             public double FA { get; set; }
             public double Crown_Radius { get; set; }
             public double Shaded_Area{get; set;}
+            public double CFa { get; set; }
 
             public static Tree FromLine(string line)
             {
@@ -78,6 +87,7 @@ namespace csv_read_write
             
             File.WriteAllText("../../../DATA/output.csv", text.ToString());
 
+           
             Console.WriteLine("DONE");
             Console.Read();
 
@@ -264,5 +274,57 @@ namespace csv_read_write
 
         }
 
+        //calculation of tree height
+        static double Height_H(double dbh)
+        {
+            double b2 = Constant_b2();
+            double b3 = Constant_b3();
+
+            return (137 + (b2 * dbh) - (b3 * Math.Pow(dbh, 2)));
+        }
+
+        //getting Growth Constant
+        static double Growth_Constant_G()
+        {
+            return (ddbh_max * H_max / (.2 * dbh_max));
+        }
+
+        // getting constant b2
+        static double Constant_b2()
+        {
+            return (2 * (H_max - 137) / dbh_max);
+        }
+
+        //getting constant b3
+        static double Constant_b3()
+        {
+            return ((H_max - 137) / Math.Pow(dbh_max, 2));
+        }
+
+        //calculating Growth per year
+        static double Growth_Rate(Tree tree)
+        {
+            double G = Growth_Constant_G();
+            double b2 = Constant_b2();
+            double b3 = Constant_b3();
+            double dbh = tree.dbh;
+            double H = tree.H;
+            double SU = 1;
+            double CFa = tree.CFa;
+
+            return ((G * dbh * (1 - ((dbh * H) / (dbh_max * H_max))) / (274 + (3 * b2 * dbh) - (4 * b3 * Math.Pow(dbh, 2))))) * SU * CFa;
+        }
+       
+        //calculating Salt Stress Factor
+        static double Salt_Stress_factor()
+        {
+            return (1 / (1 + Math.Exp(d * (Ui - U))));
+        }
+
+        //calculating Growth of this year
+        static void Growth()
+        {
+
+        }
     }
 }
