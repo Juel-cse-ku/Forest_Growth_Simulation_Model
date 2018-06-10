@@ -10,12 +10,12 @@ namespace csv_read_write
 {
     class Program
     {
-        public static double dbh_max;
-        public static double H_max;
-        public static double ddbh_max;
-        public static double d; //constant for salt effect on growth
-        public static double Ui;    //constant salt effect on growth
-        public static double U;     //constant salinity at stem position
+        public static double dbh_max = 250;
+        public static double H_max = 3500;
+        public static double ddbh_max = 3.92857;
+        public static double d = 1; //constant for salt effect on growth
+        public static double Ui = 1;    //constant salt effect on growth
+        public static double U = 1;     //constant salinity at stem position
 
 
         class Tree
@@ -69,13 +69,13 @@ namespace csv_read_write
 
         static void Main(string[] args)
         {
-            args = new[] { "../../../DATA/input.csv" };
-            var trees = ReadTrees(args[0]);
-            var zoi_trees = ZOI_Trees(trees);
-            var FA_trees = CalculateFA(trees);
-            
+            //args = new[] { "../../../DATA/input.csv" };
+            //var trees = ReadTrees(args[0]);
+            //var zoi_trees = ZOI_Trees(trees);
+            //var FA_trees = CalculateFA(trees);
 
-            var text = new StringBuilder();
+            Growth();
+           /* var text = new StringBuilder();
             var header = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13}", "X", "Y","species","dbh","rbh","AGE", "a", "b", "H","R","ZOI","FA","Crown Radius","Shaded Area");
             text.AppendLine(header);
 
@@ -85,7 +85,7 @@ namespace csv_read_write
                 text.AppendLine(newLine);
             }
             
-            File.WriteAllText("../../../DATA/output.csv", text.ToString());
+            File.WriteAllText("../../../DATA/output.csv", text.ToString());*/
 
            
             Console.WriteLine("DONE");
@@ -136,7 +136,7 @@ namespace csv_read_write
                 }
                
                 trees[k].FA = trees[k].FA / (3.1416 * Math.Pow(trees[k].R, 2));
-                Console.WriteLine(trees[k].Shaded_Area);
+               // Console.WriteLine(trees[k].Shaded_Area);
                 trees[k].Shaded_Area = trees[k].Shaded_Area / (3.1416 * Math.Pow(trees[k].Crown_Radius, 2));
                 
 
@@ -301,6 +301,23 @@ namespace csv_read_write
             return ((H_max - 137) / Math.Pow(dbh_max, 2));
         }
 
+        //calculating cmpetition
+        static IList<Tree> Competition(IList <Tree>TreeFA)
+        {
+            var list = new List<Tree>();
+            foreach (var trees in TreeFA)
+            {
+                double result = (1 - (1.3 * (trees.FA)));
+
+                Tree tree = new Tree()
+                {
+                    CFa = result,
+                };
+                list.Add(tree);
+            }
+            return list;
+        }
+
         //calculating Growth per year
         static double Growth_Rate(Tree tree)
         {
@@ -312,7 +329,10 @@ namespace csv_read_write
             double SU = 1;
             double CFa = tree.CFa;
 
-            return ((G * dbh * (1 - ((dbh * H) / (dbh_max * H_max))) / (274 + (3 * b2 * dbh) - (4 * b3 * Math.Pow(dbh, 2))))) * SU * CFa;
+            double result = ((G * dbh * (1 - ((dbh * H) / (dbh_max * H_max))) / (274 + (3 * b2 * dbh) - (4 * b3 * Math.Pow(dbh, 2))))) * SU * CFa;
+            //Console.WriteLine(result);
+
+            return result;
         }
        
         //calculating Salt Stress Factor
@@ -324,7 +344,28 @@ namespace csv_read_write
         //calculating Growth of this year
         static void Growth()
         {
+            var args = new[] { "../../../DATA/input.csv" };
+            var trees = ReadTrees(args[0]);
+            var zoi_trees = ZOI_Trees(trees);
+            var FA_trees = CalculateFA(trees);
+            var CFa_trees = Competition(FA_trees);
 
+            for(int i=0; i < trees.Count(); i++)
+            {
+                
+                double result = trees[i].dbh;
+                
+                Tree tree = new Tree()
+                {
+                    H = trees[i].H,
+                    CFa = CFa_trees[i].CFa,
+                    dbh = trees[i].dbh,
+                };
+                result += Growth_Rate(tree);
+                Console.WriteLine(result);
+            }
+
+            
         }
     }
 }
