@@ -13,7 +13,7 @@ namespace csv_read_write
         public static double dbh_max = 250;
         public static double H_max = 3500;
         public static double ddbh_max = 3.92857;
-        public static double d = 1; //constant for salt effect on growth
+        public static double d = 1;     //constant for salt effect on growth
         public static double Ui = 1;    //constant salt effect on growth
         public static double U = 1;     //constant salinity at stem position
 
