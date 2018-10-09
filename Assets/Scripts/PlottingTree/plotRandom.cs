@@ -18,7 +18,6 @@ public class plotRandom : MonoBehaviour
         public double Y { get; set; }
         public double Height { get; set; }
         public double DBH { get; set; }
-       // public double IsDeleted { get; set; }
         public int Species { get; set; }
         public int Age { get; set; }
     }
@@ -101,6 +100,7 @@ public class plotRandom : MonoBehaviour
         groundWidth = fromInputToSimulation.Width;
         //groundLength = (int)groundSize.z;
         groundLength = fromInputToSimulation.Length;
+
         groundPosX = (int)ground.transform.position.x;
         groundPosZ = (int)ground.transform.position.z;
         currentObjects = 0;
@@ -174,8 +174,7 @@ public class plotRandom : MonoBehaviour
             {
                 for (int j = 0; j < Counter.Species; j++) 
                 {
-                    
-                    
+                   
                     if (trace[j] >= CollectData.data[j, 12]) 
                     {
                         continue;
@@ -220,10 +219,6 @@ public class plotRandom : MonoBehaviour
 
                         i++;
                         n++;
-                        //if (posx > groundLength / 2 && posz > groundWidth / 2)
-                        //{
-                        //    break;
-                        //}
                     }
                     
                 }
@@ -233,11 +228,7 @@ public class plotRandom : MonoBehaviour
             {
                 Debug.Log(prop[i,15]);
             }
-
-
-           
-
-
+            
         }
 
         if (getDropDown.dropDownIndex == 2)
@@ -345,6 +336,7 @@ public class plotRandom : MonoBehaviour
                        // Debug.Log(i);
                         if (properties[i].Age == 2 || properties[i].Age == 1)
                             Instantiate(((float)properties[i].X ), ((float)properties[i].Y ), properties[i].Species);
+
                         References[i].transform.localScale = init;
                         temp2 = References[i].transform.position;
                        // if (temp.x < (((float)properties[i].DBH) * (groundLength / 100) / 200) && temp.y < (((float)properties[i].Height) * (groundLength / 100) / 3000) && temp.z < (((float)properties[i].DBH) * (groundLength / 100) / 200))
@@ -354,11 +346,7 @@ public class plotRandom : MonoBehaviour
                             temp.x = (((float)properties[i].DBH) / 50);
                             temp.y = (((float)properties[i].Height) / 1500);
                             temp.z = (((float)properties[i].DBH) / 50);
-                            //temp.x += Time.deltaTime;
-                            //temp.y += Time.deltaTime;
-                            //temp.z += Time.deltaTime;
                             temp2.y = temp.y;
-                            
                             
                             References[i].transform.localScale = temp;
                             init = temp;

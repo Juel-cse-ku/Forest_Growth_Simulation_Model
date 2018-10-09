@@ -53,11 +53,11 @@ public class Growth : MonoBehaviour {
 
         static double Get_R(double a, double b, double dbh)
         {
-
             return (a * (Math.Sqrt(dbh / 2)));
         }
 
     }
+
     //Initialization the initial values of each tree from the given input
     static IList<Tree> ReadTrees()
     {
@@ -102,7 +102,6 @@ public class Growth : MonoBehaviour {
                 dbh = ranDbh,
                 H = (137 + (b2 * ranDbh) - (b3 * Math.Pow(ranDbh, 2))),
                 R = prop[i, 5] * Math.Pow((ranDbh / 2), prop[i, 6]),
-                // isDead = 0,
                 Species = prop[i, 15],
                 PercentageOfRegeneration = prop[i, 16],
                 FA = 0,
@@ -111,13 +110,11 @@ public class Growth : MonoBehaviour {
 
             };
             list.Add(tree);
-            //Debug.Log("Here it is:DBH: " + tree.dbh+ "Height:=" +tree.H);
-
-
         }
 
         return list;
     }
+
     //Calculation of the zone of influence of each tree
     static IList<Tree> ZOI_Trees(IList<Tree> trees)
     {
@@ -129,12 +126,10 @@ public class Growth : MonoBehaviour {
                     ZOI = n.ZOI,
                 };
                 list.Add(tree);
-            
-            
-            
         }
         return list;
     }
+
     //Calculation of the affected area of a tree by the other trees 
     static IList<Tree> CalculateFA(IList<Tree> trees)
     {
@@ -149,10 +144,6 @@ public class Growth : MonoBehaviour {
             }
             for (int n = k + 1; n < trees.Count(); n++)
             {
-                //if (trees[n].isDead == 1)
-                //{
-                //    continue;
-                //}
                 trees[k].FA = trees[k].FA + (FA_kn(trees[k], trees[n]));  //Math.Abs              
                 trees[n].FA = trees[n].FA + (FA_kn(trees[n], trees[k]));
 
@@ -170,11 +161,6 @@ public class Growth : MonoBehaviour {
             trees[k].FA = trees[k].FA / (3.1416 * Math.Pow(trees[k].R, 2));
             trees[k].Shaded_Area = trees[k].Shaded_Area / (3.1416 * Math.Pow(trees[k].R, 2));
 
-            /*if (double.IsNaN(trees[k].FA) == true)
-            {
-                trees[k].FA = 0.05;
-            }*/
-
             Tree tree = new Tree()
             {
                 Phi=trees[k].Phi,
@@ -183,12 +169,10 @@ public class Growth : MonoBehaviour {
                 ShadeToleranceRanking = trees[k].ShadeToleranceRanking,
             };
             list.Add(tree);
-
-           // Debug.Log("FA: " + tree.FA);
-
         }
         return list;    //FA of all trees
     }
+
     //Calculation of affected area for a tree by another individual tree
     static double FA_kn(Tree TreeK, Tree TreeN)
     {
@@ -233,6 +217,7 @@ public class Growth : MonoBehaviour {
         return result;
 
     }
+
     //Calculation of the affected area by using pitch cycle ring
     static double Tree_FON_PCR(double phi, double r0, double r1,Tree TreeN)
     {
@@ -243,6 +228,7 @@ public class Growth : MonoBehaviour {
 
         return (result);//Math.Abs
     }
+
     //Calculation of the compitition factor for a tree
     static IList<Tree> Competition(IList<Tree> TreeFA)
     {
@@ -265,6 +251,7 @@ public class Growth : MonoBehaviour {
         }
         return list;
     }
+
     //Shade tolerance calculation
     
     static IList<Tree> ShadeTolerance(IList<Tree> TreeST)
@@ -294,6 +281,7 @@ public class Growth : MonoBehaviour {
         return list;
 
     }
+
     //Calculation of the growth rate per year
     static double Growth_Rate(Tree tree)
     {
@@ -312,11 +300,13 @@ public class Growth : MonoBehaviour {
         return result;
         
     }
+
     //Salt stress factor calculation
     static double Salt_Stress_factor()
     {
         return (1 / (1 + Math.Exp(d * (Ui - U))));
     }
+
     //the whole properties are updated here by calling the executions of the above functions and writing the updates into some files
     public void TGrowth()
     {
@@ -547,6 +537,7 @@ public class Growth : MonoBehaviour {
 
 
     }
+
 
     void Cluster_Distribution()
     {
