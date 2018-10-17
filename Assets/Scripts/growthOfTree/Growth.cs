@@ -8,7 +8,6 @@ using System.Text;
 
 public class Growth : MonoBehaviour {
 
-
     public static double ddbh_max = 3.92857;
     public static double d = 1;     //constant for salt effect on growth
     public static double Ui = 1;    //constant salt effect on growth
@@ -69,12 +68,10 @@ public class Growth : MonoBehaviour {
             for (int j = 0; j < 17; j++) 
             {
                 prop[i, j] = plotRandom.prop[i,j];
-                //Debug.Log("Here it is: " + prop[i,j]);
             }
         }
         
         var list = new List<Tree>();
-
 
         for (int i = 0; i < prop.GetLength(0); i++)
         {
@@ -259,27 +256,39 @@ public class Growth : MonoBehaviour {
         var list = new List<Tree>();
         foreach(var n in TreeST)
         {
-            double result = Math.Log10(n.ShadeToleranceRanking);
-                                     
-            
-            // excluded the followng term: * (1 - n.Shaded_Area);
+            double shade_tolerant = 1 - (1 / n.ShadeToleranceRanking);
 
-            if (result < 0)
+            //if (n.ShadeToleranceRanking == 2)
+            //    shade_tolerant = 1 - (1 / .5);
+            //else if (n.ShadeToleranceRanking == 3)
+            //    shade_tolerant = 1 - (1 / .667);
+            //else if (n.ShadeToleranceRanking == 4)
+            //    shade_tolerant = 1 - (1 / .750);
+            //else if (n.ShadeToleranceRanking == 5)
+            //    shade_tolerant = 1 - (1 / .8);
+            //else if (n.ShadeToleranceRanking == 6)
+            //    shade_tolerant = 1 - (1 / .833);
+            //else if (n.ShadeToleranceRanking == 7)
+            //    shade_tolerant = 1 - (1 / .857);
+            //else if (n.ShadeToleranceRanking == 8)
+            //    shade_tolerant = 1 - (1 / .875);
+            //else if (n.ShadeToleranceRanking == 9)
+            //    shade_tolerant = 1 - (1 / .889);
+            //else if (n.ShadeToleranceRanking == 10)
+            //    shade_tolerant = 1 - (1 / .9);
+
+            if (shade_tolerant < 0)
             {
-                result = 0;
+                shade_tolerant = 0;
             }
-            //result = 1;//edit
+
             Tree tree = new Tree()
             {
-                ShadeToleranceValue = result,
+                ShadeToleranceValue = shade_tolerant,
             };
             list.Add(tree);
-           // Debug.Log(result);
-
         }
-
         return list;
-
     }
 
     //Calculation of the growth rate per year
@@ -311,22 +320,44 @@ public class Growth : MonoBehaviour {
     public void TGrowth()
     {
         var trees = ReadTrees();
-
         int Index = plotRandom.n;
+        
+        int[] new_tree = new int[Counter.Species];
+        for (int i = 0; i < Counter.Species; i++)
+        {
+            new_tree[i] = (int)(CollectData.data[i, 12] * CollectData.data[i, 14]) / 100;
+        }
 
+        string CreateFolder = "OUTPUT";
+        //System.IO.Directory.CreateDirectory(CreateFolder);
+        bool exists = System.IO.Directory.Exists(CreateFolder);
+        if (!exists)
+            System.IO.Directory.CreateDirectory(CreateFolder);
+        else
+        {
+            DirectoryInfo dir = new DirectoryInfo("OUTPUT");
+            foreach (FileInfo fi in dir.GetFiles())
+            {
+                fi.Delete();
+            }
+
+            //foreach (DirectoryInfo di in dir.GetDirectories())
+            //{
+            //    clearFolder(di.FullName);
+            //    di.Delete();
+            //}
+        }
 
         for (int simNum = 0; simNum < int.Parse(inputSceneStatus.SimulationNumber); simNum++)
         {
-            //int Index = plotRandom.n;
             for (int age = 1; age < int.Parse(inputSceneStatus.year); age++)
             {
-
                 var zoi_trees = ZOI_Trees(trees);
                 var FA_trees = CalculateFA(trees);
                 var CFa_trees = Competition(FA_trees);
                 var shadeToleranceVal = ShadeTolerance(FA_trees);
-                int NewTree = (int) Math.Round(trees.Count()*trees[0].PercentageOfRegeneration/100), count = 0;
-                Debug.Log(NewTree);
+
+                int[] count_new_tree = new int[Counter.Species];
 
                 List<Tree> treeToWrite = new List<Tree>();
                 List<Tree> treeToWriteNewGen = new List<Tree>();
@@ -338,7 +369,6 @@ public class Growth : MonoBehaviour {
                     {
                         H = trees[i].H,
                         CFa = CFa_trees[i].CFa,
-                        //CFa=0.5,
                         dbh = trees[i].dbh,
                         MaxDbh = trees[i].MaxDbh,
                         MaxHeight = trees[i].MaxHeight,
@@ -346,12 +376,10 @@ public class Growth : MonoBehaviour {
                     };
 
                     double GR = Growth_Rate(tree);
-                    //Debug.Log("GR: " + GR);
                     result += GR;
 
                     if (GR > trees[i].CritDx)
                     {
-                        //Debug.Log(trees[i].CritDx);
                         Tree tree_to_write = new Tree()
                         {
                             index = trees[i].index,
@@ -374,7 +402,6 @@ public class Growth : MonoBehaviour {
                             MaxAge = trees[i].MaxAge,
                             ShadeToleranceRanking = trees[i].ShadeToleranceRanking,
                             R = trees[i].a * Math.Pow((result / 2), trees[i].b),
-                            // isDead=deletion,
                             b2 = trees[i].b2,
                             b3 = trees[i].b3,
                             PercentageOfRegeneration = trees[i].PercentageOfRegeneration,
@@ -382,19 +409,29 @@ public class Growth : MonoBehaviour {
                         treeToWrite.Add(tree_to_write);
                     }
 
-
-
-                    //int ranNum = UnityEngine.Random.Range(1, 20);
-                    if (age > 1 && NewTree > 0 && count < NewTree)
+                    if (age > 5 && new_tree[(int)trees[i].Species - 1] > 0 && count_new_tree[(int)trees[i].Species - 1] < new_tree[(int)trees[i].Species - 1]) 
                     {
-                        // Debug.Log("Index:"+Index+" plotRandom.n="+plotRandom.n);
                         float randomDBH = (float)2.5 + UnityEngine.Random.Range(0.0f, 0.09f);
                         double rad = 15.233 * (trees[i].dbh / 2) + 1.1331;
+
+                        float x, y;
+                        while (true)
+                        {
+                            x = UnityEngine.Random.Range((float)(plotRandom.groundPosX - (plotRandom.groundWidth / 2)), (float)(plotRandom.groundPosX + (plotRandom.groundWidth / 2))) * 100;
+                            y = UnityEngine.Random.Range((float)(plotRandom.groundPosZ - (plotRandom.groundLength / 2)), (float)(plotRandom.groundPosZ + (plotRandom.groundLength / 2))) * 100;
+
+                            if (D(x, y, (float)trees[i].X, (float)trees[i].Y) > trees[i].rbh)
+                            {
+                                break;
+                            }
+
+                        }
+
                         Tree tree_to_write_new_gen = new Tree()
                         {
                             index = Index,
-                            X = UnityEngine.Random.Range((float)(plotRandom.groundPosX - (plotRandom.groundWidth / 2)), (float)(plotRandom.groundPosX + (plotRandom.groundWidth / 2))) * 100,
-                            Y = UnityEngine.Random.Range((float)(plotRandom.groundPosZ - (plotRandom.groundLength / 2)), (float)(plotRandom.groundPosZ + (plotRandom.groundLength / 2))) * 100,
+                            X = x,
+                            Y = y,
                             Species = trees[i].Species,
                             dbh = randomDBH,
                             AGE = 0,
@@ -418,37 +455,17 @@ public class Growth : MonoBehaviour {
                         };
                         treeToWriteNewGen.Add(tree_to_write_new_gen);
 
-                        // Debug.Log("Its ok");
                         Index++;
-                        count++;
+                        count_new_tree[(int)trees[i].Species - 1]++;
                     }
 
-                    //  Debug.Log( "  dbh : " + tree_to_write.dbh + " Height: " + tree_to_write.H);
                 }
                 // Debug.Log(treeToWrite.Count());
                 treeToWrite.AddRange(treeToWriteNewGen);
-                //totalInFile[age - 1] = treeToWrite.Count;
-
 
                 trees = treeToWrite;
 
-                string CreateFolder = "OUTPUT";
-
-                bool exists = System.IO.Directory.Exists(CreateFolder);
-
-                if (!exists)
-                    System.IO.Directory.CreateDirectory(CreateFolder);
-
                 
-
-
-
-
-
-
-
-
-
 
 
                 string fileName = "OUTPUT/Simulation_year_" + ((age + 1)).ToString() + "_Sim Num_" + simNum.ToString() + ".csv";
@@ -617,9 +634,6 @@ public class Growth : MonoBehaviour {
 
     void Repulsion_Distribution()
     {
-        //grPosX = ground.transform.position.x;
-        //grPosZ = ground.transform.position.z;
-
         pos_trees = new float[plotRandom.total, 2];
         pos_trees[0, 0] = UnityEngine.Random.Range(plotRandom.groundPosX - plotRandom.groundWidth / 2, plotRandom.groundPosX + plotRandom.groundWidth / 2); // x coordinate
         pos_trees[0, 1] = UnityEngine.Random.Range(plotRandom.groundPosZ - plotRandom.groundLength / 2, plotRandom.groundPosZ + plotRandom.groundLength / 2); // z coordinate
@@ -658,6 +672,5 @@ public class Growth : MonoBehaviour {
         {
             Debug.Log(ColorPicker.SpeciesColor[i]);
         }
-        //Debug.Log(count);
     }
 }

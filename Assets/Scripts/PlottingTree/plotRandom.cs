@@ -25,7 +25,7 @@ public class plotRandom : MonoBehaviour
     static IList<Properties> Read_Properties(bool hasheaders = true)
     {
         var list = new List<Properties>();
-        var path = "OUTPUT/Simulation_year_" + p + "_Sim Num_" + SimYear.ToString()+ ".csv";
+        var path = "OUTPUT/Simulation_year_" + p + "_Sim Num_" + SimYear.ToString() + ".csv";
         //Debug.Log(path);
         foreach (var line in File.ReadAllLines(path).Skip(hasheaders ? 1 : 0))
         {
@@ -47,7 +47,7 @@ public class plotRandom : MonoBehaviour
         return list;
     }
 
-    
+
 
     public GameObject ground;
     //public Terrain terrain;
@@ -57,7 +57,7 @@ public class plotRandom : MonoBehaviour
     public static int numberOfObjects;
     public static int numberOfObjects2;
     public static int numberOfObjects3;
-    public static int total=0;
+    public static int total = 0;
     public static int n;
     public static int time;
 
@@ -66,7 +66,7 @@ public class plotRandom : MonoBehaviour
     private int currentObjects2;
     private int currentObjects3;
     public GameObject objectToPlace;
-    private GameObject [] objectToPlace2;
+    private GameObject[] objectToPlace2;
     public GameObject objectToPlace3;
 
     public static float[,] prop;
@@ -81,15 +81,14 @@ public class plotRandom : MonoBehaviour
 
     public Material[] SpeciesMaterial = new Material[Counter.Species];
 
-
-
     void Start()
     {
-        for(int i = 0; i < Counter.Species; i++)
+        for (int i = 0; i < Counter.Species; i++)
         {
             SpeciesMaterial[i] = new Material(Shader.Find("Standard"));
             SpeciesMaterial[i].color = ColorPicker.SpeciesColor[i];
         }
+
         SimYear = 0;
         //Vector3 groundSize = GetComponent<Collider>().bounds.size;
         References = new List<GameObject>();
@@ -188,7 +187,7 @@ public class plotRandom : MonoBehaviour
                         if (posx < groundLength / 2 ) 
                         {
                             posx = posx + spacing;
-                            posz = posz;
+                           // posz = posz;
                         }
                         //if (posx > groundLength / 2)
                         else

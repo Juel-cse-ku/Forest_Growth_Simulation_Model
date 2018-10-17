@@ -21,7 +21,7 @@ public class CollectData : MonoBehaviour {
     public InputField NumOfSapling;
     public InputField PercenageOfRegeneration;
 
-    public static double[,] data=new double[int.Parse(inputSceneStatus.numTree1), 15];
+    public static double[,] data = new double[int.Parse(inputSceneStatus.numTree1), 15];
 
 	public void GatherData()
     {
@@ -33,6 +33,7 @@ public class CollectData : MonoBehaviour {
         {
             //data[Counter.Count - 1, 0] = 0;
             data[Counter.Count - 1, 0] = 3500;
+            Debug.Log(e);
         }
 
         try
@@ -43,6 +44,7 @@ public class CollectData : MonoBehaviour {
         {
             //data[Counter.Count - 1, 1] = 0;
             data[Counter.Count - 1, 1] = 450;
+            Debug.Log(e);
         }
 
         try
@@ -53,6 +55,7 @@ public class CollectData : MonoBehaviour {
         {
             //data[Counter.Count - 1, 2] = 0;
             data[Counter.Count - 1, 2] = 8.26;
+            Debug.Log(e);
         }
 
         try
@@ -63,6 +66,7 @@ public class CollectData : MonoBehaviour {
         {
             //data[Counter.Count - 1, 3] = 0;
             data[Counter.Count - 1, 3] = .5352;
+            Debug.Log(e);
         }
 
         try
@@ -73,6 +77,7 @@ public class CollectData : MonoBehaviour {
         {
             //data[Counter.Count - 1, 4] = 0;
             data[Counter.Count - 1, 4] = .589;
+            Debug.Log(e);
         }
 
         try
@@ -83,6 +88,7 @@ public class CollectData : MonoBehaviour {
         {
            // data[Counter.Count - 1, 5] = 0;
             data[Counter.Count - 1, 5] = 1.3;
+            Debug.Log(e);
         }
 
         try
@@ -93,6 +99,7 @@ public class CollectData : MonoBehaviour {
         {
            // data[Counter.Count - 1, 6] = 0;
             data[Counter.Count - 1, 6] = 0.1;
+            Debug.Log(e);
         }
 
         try
@@ -103,6 +110,7 @@ public class CollectData : MonoBehaviour {
         {
             //data[Counter.Count - 1, 7] = 0;
             data[Counter.Count - 1, 7] = 1;
+            Debug.Log(e);
         }
 
         try
@@ -112,6 +120,7 @@ public class CollectData : MonoBehaviour {
         catch (Exception e)
         {
             data[Counter.Count - 1, 8] = 1;
+            Debug.Log(e);
         }
 
         try
@@ -121,6 +130,7 @@ public class CollectData : MonoBehaviour {
         catch (Exception e)
         {
             data[Counter.Count - 1, 9] = 1;
+            Debug.Log(e);
         }
 
         try
@@ -130,6 +140,7 @@ public class CollectData : MonoBehaviour {
         catch (Exception e)
         {
             data[Counter.Count - 1, 10] = 500;
+            Debug.Log(e);
         }
 
         try
@@ -139,6 +150,7 @@ public class CollectData : MonoBehaviour {
         catch (Exception e)
         {
             data[Counter.Count - 1, 11] = 9;
+            Debug.Log(e);
         }
 
         try
@@ -148,15 +160,17 @@ public class CollectData : MonoBehaviour {
         catch (Exception e)
         {
             data[Counter.Count - 1, 12] = 0;
+            Debug.Log(e);
         }
         try
         {
             data[Counter.Count - 1, 14] = double.Parse(PercenageOfRegeneration.text);
-            Debug.Log(double.Parse(PercenageOfRegeneration.text));
+            //Debug.Log(double.Parse(PercenageOfRegeneration.text));
         }
         catch (Exception e)
         {
             data[Counter.Count - 1, 14] = 0;
+            Debug.Log(e);
         }
 
         data[Counter.Count - 1, 13] = Counter.Count;

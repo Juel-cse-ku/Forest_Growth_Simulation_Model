@@ -55,6 +55,7 @@ public class fromInputToSimulation : MonoBehaviour {
                 //Width = 10;//delete when debugged
                 //Debug.Log(Length);
                 //Tree1 = 10;
+                Debug.Log(e);
             }
             
            

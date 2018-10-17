@@ -310,6 +310,8 @@
     <Compile Include="Assets\ColorPicker\DrawGUIOrderColorPicker.cs" />
     <Compile Include="Assets\ColorPicker\ObjectColor.cs" />
     <Compile Include="Assets\ColorPicker\PSColor.cs" />
+    <Compile Include="Assets\Juel\Properties_of_Species.cs" />
+    <Compile Include="Assets\Juel\Tree.cs" />
     <Compile Include="Assets\Level_Loader.cs" />
     <Compile Include="Assets\Scripts\AllValues\AllvaluesTogether.cs" />
     <Compile Include="Assets\Scripts\dropdown\getDropDown.cs" />
