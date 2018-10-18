@@ -329,7 +329,6 @@ public class Growth : MonoBehaviour {
         }
 
         string CreateFolder = "OUTPUT";
-        //System.IO.Directory.CreateDirectory(CreateFolder);
         bool exists = System.IO.Directory.Exists(CreateFolder);
         if (!exists)
             System.IO.Directory.CreateDirectory(CreateFolder);
@@ -340,12 +339,6 @@ public class Growth : MonoBehaviour {
             {
                 fi.Delete();
             }
-
-            //foreach (DirectoryInfo di in dir.GetDirectories())
-            //{
-            //    clearFolder(di.FullName);
-            //    di.Delete();
-            //}
         }
 
         for (int simNum = 0; simNum < int.Parse(inputSceneStatus.SimulationNumber); simNum++)
@@ -465,11 +458,7 @@ public class Growth : MonoBehaviour {
 
                 trees = treeToWrite;
 
-                
-
-
                 string fileName = "OUTPUT/Simulation_year_" + ((age + 1)).ToString() + "_Sim Num_" + simNum.ToString() + ".csv";
-
                 var data = new StringBuilder();
                 var header = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}", "Index", "X", "Y", "Species", "DBH", "Age", "a", "b", "Height");
                 data.AppendLine(header);
@@ -479,9 +468,6 @@ public class Growth : MonoBehaviour {
                     data.AppendLine(newLine);
                 }
                 File.WriteAllText(fileName, data.ToString());
-
-                //if (age == int.Parse(inputSceneStatus.year) - 1)
-                //    start = 1;
 
             }
             trees = ReadTrees();
@@ -506,16 +492,11 @@ public class Growth : MonoBehaviour {
                     {
                         for (int j = 0; j < (int)(CollectData.data[i, 12]); j++)
                         {
-                            //float posx = UnityEngine.Random.Range((float)(groundPosX - (groundWidth / 2)), (float)(groundPosX + (groundWidth / 2)));
-                            //float posz = UnityEngine.Random.Range((float)(groundPosZ - (groundLength / 2)), (float)(groundPosZ + (groundLength / 2)));
                             float posx = pos_trees[n1, 0];
                             float posz = pos_trees[n1, 1];
                             n.X = posx * 100;
                             n.Y = posz * 100;
                             n1++;
-
-                            //Material mat = new Material();
-
                         }
 
                     }
@@ -531,8 +512,6 @@ public class Growth : MonoBehaviour {
                         {
                             for (int j = 0; j < (int)(CollectData.data[i, 12]); j++)
                             {
-                                //float posx = UnityEngine.Random.Range((float)(groundPosX - (groundWidth / 2)), (float)(groundPosX + (groundWidth / 2)));
-                                //float posz = UnityEngine.Random.Range((float)(groundPosZ - (groundLength / 2)), (float)(groundPosZ + (groundLength / 2)));
                                 float posx = pos_trees[n1, 0];
                                 float posz = pos_trees[n1, 1];
                                 n.X = posx * 100;
@@ -548,13 +527,8 @@ public class Growth : MonoBehaviour {
             }
             if (simNum == int.Parse(inputSceneStatus.SimulationNumber) - 1)
                 start = 1;
-
         }
-        
-
-
     }
-
 
     void Cluster_Distribution()
     {

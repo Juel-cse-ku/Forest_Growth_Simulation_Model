@@ -17,9 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/propertiesofTree1.unity
     guid: 3ad3865c4f6f28141bc3fa4e660dfbc4
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/propertiesofTree2.unity
     guid: 42f3601b9ab77504b9109e746af05663
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/propertiesofTree3.unity
     guid: b8bad00a09af55b4e9cb19fe091c7880
